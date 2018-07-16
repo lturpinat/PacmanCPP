@@ -6,6 +6,7 @@
 #include <boost/graph/adjacency_list.hpp>
 
 #include <alpm_manager.h>
+#include <dfs_custom_visitor.hpp>
 
 #define GRAPHMANAGER_H
 
@@ -34,7 +35,8 @@ public:
      * @return graph representing the relations between the packages
      */
     graph_t buildGraph(int depth = 0);
-    void printGraph(graph_t g, const char* filename);
+    void printGraph(graph_t const &g, const char* filename);
+    void depthFirstSearch(graph_t const &g);
 };
 
 #endif // GRAPHMANAGER_H

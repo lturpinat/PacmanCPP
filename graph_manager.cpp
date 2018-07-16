@@ -43,7 +43,14 @@ graph_t GraphManager::buildGraph(int depth)
     return g;
 }
 
-void GraphManager::printGraph(graph_t g, const char* filename)
+void GraphManager::depthFirstSearch(graph_t const &graph)
+{
+    DFSCustomVisitor customVisitor;
+
+    depth_first_search(graph, visitor(customVisitor));
+}
+
+void GraphManager::printGraph(graph_t const &g, const char* filename)
 {
     ofstream file{};
 
