@@ -2,20 +2,18 @@
 
 GraphManager::GraphManager(AlpmManager manager) : manager(manager) {}
 
-graph_t GraphManager::buildGraph(int depth)
+graph_t GraphManager::buildGraph()
 {
-    if(depth < 0) throw invalid_argument("Depth should be a positive number!");
-
     auto packages = manager.getPackages();
 
     graph_t g;
 
-    int i = depth;
+//    int i = depth;
 
     // Adding vertexes
     for (const auto& kv : packages)
     {
-        if(i == 0) break;
+//        if(i == 0) break;
 
         vertex_t package = boost::add_vertex(Vertex{kv.first}, g);
 
@@ -37,17 +35,78 @@ graph_t GraphManager::buildGraph(int depth)
             }
         }
 
-        i--;
+//        i--;
     }
 
     return g;
 }
 
-void GraphManager::depthFirstSearch(graph_t const &graph)
+void GraphManager::DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex_t> &visited)
 {
-    DFSCustomVisitor customVisitor;
+    // Mark the current node as visited and print it
+    visited.push_back(vertex);
 
-    depth_first_search(graph, visitor(customVisitor));
+    for ( std::pair<out_edge_iterator, out_edge_iterator> ve = boost::out_edges( vertex, graph );
+          ve.first != ve.second; ++ve.first )
+    {
+        vertex_t v2 = boost::target( *ve.first, graph );
+//        cout << " " << v2;
+
+        if(find(visited.begin(), visited.end(), v2) != visited.end())
+            continue;
+
+        DFSUtil(graph, v2, visited);
+
+    }
+//    cout << std::endl;
+}
+
+void GraphManager::DFS(graph_t const &graph)
+{
+    unsigned long numberVertices = boost::num_vertices(graph);
+
+    // Marking all vertices as not visited
+    vector<vertex_t> visited(numberVertices);
+
+    // Call the recursive helper function to print DFS traversal
+    // starting from all vertices one by one
+    for ( std::pair<vertex_iterator, vertex_iterator> vp = boost::vertices( graph );
+          vp.first != vp.second; ++vp.first )
+    {
+        if(find(visited.begin(), visited.end(), *vp.first) != visited.end())
+            continue;
+
+        vertex_t v = *vp.first;
+        DFSUtil(graph, v, visited);
+    }
+}
+
+vector<vertex_t> GraphManager::DFSFromVertex(graph_t const &graph, const string& packageName)
+{
+    unsigned long numberVertices = boost::num_vertices(graph);
+
+    // Initialize the vector at the number of vertices
+    // TOFIX: using vectors "un-sized" is problematic as :
+    // "If the new size() is greater than capacity() then all iterators
+    // and references (including the past-the-end iterator) are invalidated.
+    // Otherwise only the past-the-end iterator is invalidated."
+    // (recursive calls in DFSUtil()
+
+
+    vector<vertex_t> visited(numberVertices);
+
+    auto vertexByName = findVertex(graph, packageName);
+    vertex_t s = *vertexByName;
+
+    DFSUtil(graph, s, visited);
+
+    // Clean the vector from [0,0,0,0,1,4,54] to [1,4,54]
+    auto cleanedVisitedArray = remove_if(visited.begin(), visited.end(), [](vertex_t &vertex)
+    { return vertex == static_cast<unsigned long>(0); });
+
+    visited.erase(cleanedVisitedArray, visited.end());
+
+    return visited;
 }
 
 void GraphManager::printGraph(graph_t const &g, const char* filename)
@@ -70,7 +129,7 @@ void GraphManager::printGraph(graph_t const &g, const char* filename)
     }
 }
 
-vertex_iterator GraphManager::findVertex(const graph_t& graph, const string& value) {
+vertex_iterator GraphManager::findVertex(graph_t const &graph, const string& value) {
     vertex_iterator vi, vi_end;
 
     for(boost::tie(vi, vi_end) = vertices(graph); vi != vi_end; ++vi)

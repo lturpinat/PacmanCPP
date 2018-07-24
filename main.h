@@ -1,6 +1,6 @@
 #ifndef MAIN_H
 
-#include <vector>
+#include <iostream>
 #include <map>
 #include <string>
 
@@ -9,7 +9,5 @@
 #include <graph_manager.h>
 
 #define MAIN_H
-
-using namespace std;
 
 #endif // MAIN_H

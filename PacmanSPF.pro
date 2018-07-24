@@ -18,5 +18,4 @@ HEADERS += \
     package_dependency.h \
     main.h \
     alpm_manager.h \
-    graph_manager.h \
-    dfs_custom_visitor.hpp
+    graph_manager.h
