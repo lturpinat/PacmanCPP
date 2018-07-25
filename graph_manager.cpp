@@ -8,7 +8,7 @@ graph_t GraphManager::buildGraph()
 
     graph_t g;
 
-//    int i = depth;
+//    int i = 50;
 
     // Adding vertexes
     for (const auto& kv : packages)
@@ -50,7 +50,7 @@ void GraphManager::DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex
           ve.first != ve.second; ++ve.first )
     {
         vertex_t v2 = boost::target( *ve.first, graph );
-//        cout << " " << v2;
+        //        cout << " " << v2;
 
         if(find(visited.begin(), visited.end(), v2) != visited.end())
             continue;
@@ -58,10 +58,10 @@ void GraphManager::DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex
         DFSUtil(graph, v2, visited);
 
     }
-//    cout << std::endl;
+    //    cout << std::endl;
 }
 
-void GraphManager::DFS(graph_t const &graph)
+vector<string> GraphManager::DFS(graph_t const &graph)
 {
     unsigned long numberVertices = boost::num_vertices(graph);
 
@@ -79,9 +79,24 @@ void GraphManager::DFS(graph_t const &graph)
         vertex_t v = *vp.first;
         DFSUtil(graph, v, visited);
     }
+
+    // Clean the vector from [0,0,0,0,1,4,54] to [1,4,54] and remove from the list the very package vertex
+    // id we are looking for.
+    auto cleanedVisitedArray = remove_if(visited.begin(), visited.end(), [](vertex_t &vertex)
+    { return vertex == static_cast< unsigned long >(0); });
+
+    visited.erase(cleanedVisitedArray, visited.end());
+
+    return mapVerticesIDToPackagesName(graph, visited);
 }
 
-vector<vertex_t> GraphManager::DFSFromVertex(graph_t const &graph, const string& packageName)
+/**
+ * @brief GraphManager::DFSFromVertex
+ * @param graph
+ * @param packageName
+ * @return a list of dependencies ID or an empty list if there are no related dependency found
+ */
+vector<string> GraphManager::DFSFromVertex(graph_t const &graph, const string& packageName)
 {
     unsigned long numberVertices = boost::num_vertices(graph);
 
@@ -91,45 +106,78 @@ vector<vertex_t> GraphManager::DFSFromVertex(graph_t const &graph, const string&
     // and references (including the past-the-end iterator) are invalidated.
     // Otherwise only the past-the-end iterator is invalidated."
     // (recursive calls in DFSUtil()
-
-
     vector<vertex_t> visited(numberVertices);
 
     auto vertexByName = findVertex(graph, packageName);
+    if(vertexByName == vertices(graph).second)
+        return vector<string>();
+
     vertex_t s = *vertexByName;
 
     DFSUtil(graph, s, visited);
 
-    // Clean the vector from [0,0,0,0,1,4,54] to [1,4,54]
-    auto cleanedVisitedArray = remove_if(visited.begin(), visited.end(), [](vertex_t &vertex)
-    { return vertex == static_cast<unsigned long>(0); });
+    // Clean the vector from [0,0,0,0,1,4,54] to [1,4,54] and remove from the list the very package vertex
+    // id we are looking for.
+    auto cleanedVisitedArray = remove_if(visited.begin(), visited.end(), [&s](vertex_t &vertex)
+    { return vertex == static_cast< unsigned long >(0) || vertex == s; });
 
     visited.erase(cleanedVisitedArray, visited.end());
 
-    return visited;
+    return mapVerticesIDToPackagesName(graph, visited);
+}
+
+set<string> GraphManager::DFSFromMultipleVertices(graph_t &graph, const vector<string>& packagesNames)
+{
+    set<string> requiredVertices;
+
+    for(auto pkg : packagesNames)
+    {
+        auto dependencies = DFSFromVertex(graph, pkg);
+        for_each(dependencies.begin(), dependencies.end(), [&requiredVertices](const string& val){
+            requiredVertices.insert(val);
+        });
+    }
+
+    return requiredVertices;
+}
+
+vector<string> GraphManager::mapVerticesIDToPackagesName(graph_t const &graph, vector<vertex_t> const &vertices)
+{
+    vector<string> dependenciesAsString;
+    std::transform(vertices.begin(), vertices.end(), back_inserter(dependenciesAsString), [ &graph ](const vertex_t& val)
+    {
+        return graph[val].name;
+    });
+
+    return dependenciesAsString;
 }
 
 void GraphManager::printGraph(graph_t const &g, const char* filename)
 {
     ofstream file{};
 
-    try {
+    try
+    {
         file.open (filename);
 
-        boost::write_graphviz(file, g, [&] (ostream& out, vertex_t v) {
+        boost::write_graphviz(file, g, [&] (ostream& out, vertex_t v)
+        {
             out << "[label=\"" << g[v].name << "\"]";
         },
-        [&] (ostream& out, edge_t e) {
+        [&] (ostream& out, edge_t e)
+        {
             out << "[label=\"" << (g[e].required ? "required\"" : "optional\", color=\"blue\"") << "]";
         });
 
         file << flush;
-    } catch (ofstream::failure e) {
+    } catch (ofstream::failure e)
+    {
         cerr << "Couldn't write within /tmp/graph.dot" << endl;
     }
 }
 
-vertex_iterator GraphManager::findVertex(graph_t const &graph, const string& value) {
+vertex_iterator GraphManager::findVertex(graph_t const &graph, const string& value)
+{
     vertex_iterator vi, vi_end;
 
     for(boost::tie(vi, vi_end) = vertices(graph); vi != vi_end; ++vi)
