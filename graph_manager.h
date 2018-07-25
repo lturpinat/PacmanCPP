@@ -15,21 +15,23 @@ struct Vertex { std::string name; };
 struct Edge { bool required; };
 
 using graph_t  = boost::adjacency_list<boost::listS, boost::vecS, boost::directedS, Vertex, Edge >;
-using vertex_t = boost::graph_traits<graph_t>::vertex_descriptor;
-using vertex_iterator = boost::graph_traits<graph_t>::vertex_iterator;
-using edge_t = boost::graph_traits<graph_t>::edge_descriptor;
 
-typedef boost::graph_traits<graph_t>::vertices_size_type vertices_size_type; // ie DigitalSurface::Size
-typedef boost::graph_traits<graph_t>::vertex_iterator vertex_iterator;    // the iterator for visiting all vertices
-typedef boost::graph_traits<graph_t>::out_edge_iterator out_edge_iterator;   // the iterator for visiting out edges of a vertex
-typedef boost::graph_traits<graph_t>::edge_iterator edge_iterator;           // the iterator for visiting all edges
+using vertex_t = boost::graph_traits<graph_t>::vertex_descriptor;
+using vertices_size_type = boost::graph_traits<graph_t>::vertices_size_type ;
+using vertex_iterator = boost::graph_traits<graph_t>::vertex_iterator;
+
+using edge_t = boost::graph_traits<graph_t>::edge_descriptor;
+using out_edge_iterator = boost::graph_traits<graph_t>::out_edge_iterator ;
+using edge_iterator = boost::graph_traits<graph_t>::edge_iterator ;
 
 class GraphManager
 {
 private:
     AlpmManager manager;
+
     vertex_iterator findVertex(graph_t const &graph, const string& value);
     vector<string> mapVerticesIDToPackagesName(graph_t const &graph, vector<vertex_t> const &vertices);
+    void DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex_t> &visited);
 
 public:
     GraphManager(AlpmManager manager);
@@ -40,9 +42,7 @@ public:
      */
     graph_t buildGraph();
     void printGraph(graph_t const &g, const char* filename);
-    bool hasPath(graph_t const &graph, vertex_t src, vertex_t dest);
     vector<string> DFS(graph_t const &graph);
-    void DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex_t> &visited);
     vector<string> DFSFromVertex(graph_t const &graph, const string& packageName);
     set<string> DFSFromMultipleVertices(graph_t &graph, const vector<string>& packagesNames);
 };
