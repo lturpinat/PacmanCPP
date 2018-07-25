@@ -15,14 +15,12 @@ int main()
 
     cout << "Graph generated!" << endl;
 
-    // Finding dependencies of <package>
-    const string package = "avahi";
-    auto results = graphManager.DFSFromVertex(g, package);
-
-    cout << "Dependencies of \"" << package << "\" : ";
+    // Finding dependencies of the following packages
+    const vector<string> packages = { "bind", "bind-tools", "avahi" };
+    auto results = graphManager.DFSFromMultipleVertices(g, packages);
 
     // Printing results...
-    for_each(results.begin(), results.end(), [](vertex_t const &vertex)
+    for_each(results.begin(), results.end(), [](string const &vertex)
     {
         cout << vertex << " ";
     });
