@@ -16,8 +16,8 @@ int main()
     cout << "Graph generated!" << endl;
 
     // Finding dependencies of the following packages
-    const vector<string> packages = { "bind", "bind-tools", "avahi" };
-    auto results = graphManager.DFSFromMultipleVertices(g, packages);
+    const vector<string> packages = { "bluez-utils" };
+    auto results = graphManager.DFSFromMultipleVertices(g, packages, false);
 
     // Printing results...
     for_each(results.begin(), results.end(), [](string const &vertex)

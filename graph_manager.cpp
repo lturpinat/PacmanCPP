@@ -8,12 +8,12 @@ graph_t GraphManager::buildGraph()
 
     graph_t g;
 
-//    int i = 50;
+    int i = 50;
 
     // Adding vertexes
     for (const auto& kv : packages)
     {
-//        if(i == 0) break;
+        if(i == 0) break;
 
         vertex_t package = boost::add_vertex(Vertex{kv.first}, g);
 
@@ -35,33 +35,45 @@ graph_t GraphManager::buildGraph()
             }
         }
 
-//        i--;
+        i--;
     }
 
     return g;
 }
 
-void GraphManager::DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex_t> &visited)
+void GraphManager::DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex_t> &visited, bool onlyRequiredDependencies)
 {
     // Mark the current node as visited and print it
     visited.push_back(vertex);
 
+    //Iterating recursively through the nearby vertices
     for ( std::pair<out_edge_iterator, out_edge_iterator> ve = boost::out_edges( vertex, graph );
           ve.first != ve.second; ++ve.first )
     {
         vertex_t v2 = boost::target( *ve.first, graph );
-        //        cout << " " << v2;
 
+        //If the vertice has already been visited, skip it
         if(find(visited.begin(), visited.end(), v2) != visited.end())
             continue;
 
-        DFSUtil(graph, v2, visited);
+        if(onlyRequiredDependencies)
+        {
+            auto edge = boost::edge(vertex, v2, graph);
 
+            // If dependency is functional
+            if(edge.second && graph[edge.first].required)
+            {
+                DFSUtil(graph, v2, visited, onlyRequiredDependencies);
+            }
+        }
+        else
+        {
+            DFSUtil(graph, v2, visited, onlyRequiredDependencies);
+        }
     }
-    //    cout << std::endl;
 }
 
-vector<string> GraphManager::DFS(graph_t const &graph)
+vector<string> GraphManager::DFS(graph_t const &graph, bool onlyRequiredDependencies)
 {
     unsigned long numberVertices = boost::num_vertices(graph);
 
@@ -77,7 +89,7 @@ vector<string> GraphManager::DFS(graph_t const &graph)
             continue;
 
         vertex_t v = *vp.first;
-        DFSUtil(graph, v, visited);
+        DFSUtil(graph, v, visited, onlyRequiredDependencies);
     }
 
     // Clean the vector from [0,0,0,0,1,4,54] to [1,4,54] and remove from the list the very package vertex
@@ -96,7 +108,7 @@ vector<string> GraphManager::DFS(graph_t const &graph)
  * @param packageName
  * @return a list of dependencies ID or an empty list if there are no related dependency found
  */
-vector<string> GraphManager::DFSFromVertex(graph_t const &graph, const string& packageName)
+vector<string> GraphManager::DFSFromVertex(graph_t const &graph, const string& packageName, bool onlyRequiredDependencies)
 {
     unsigned long numberVertices = boost::num_vertices(graph);
 
@@ -114,7 +126,7 @@ vector<string> GraphManager::DFSFromVertex(graph_t const &graph, const string& p
 
     vertex_t s = *vertexByName;
 
-    DFSUtil(graph, s, visited);
+    DFSUtil(graph, s, visited, onlyRequiredDependencies);
 
     // Clean the vector from [0,0,0,0,1,4,54] to [1,4,54] and remove from the list the very package vertex
     // id we are looking for.
@@ -126,13 +138,13 @@ vector<string> GraphManager::DFSFromVertex(graph_t const &graph, const string& p
     return mapVerticesIDToPackagesName(graph, visited);
 }
 
-set<string> GraphManager::DFSFromMultipleVertices(graph_t &graph, const vector<string>& packagesNames)
+set<string> GraphManager::DFSFromMultipleVertices(graph_t &graph, const vector<string>& packagesNames, bool onlyRequiredDependencies)
 {
     set<string> requiredVertices;
 
     for(auto pkg : packagesNames)
     {
-        auto dependencies = DFSFromVertex(graph, pkg);
+        auto dependencies = DFSFromVertex(graph, pkg, onlyRequiredDependencies);
         for_each(dependencies.begin(), dependencies.end(), [&requiredVertices](const string& val){
             requiredVertices.insert(val);
         });

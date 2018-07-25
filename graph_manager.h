@@ -26,13 +26,6 @@ using edge_iterator = boost::graph_traits<graph_t>::edge_iterator ;
 
 class GraphManager
 {
-private:
-    AlpmManager manager;
-
-    vertex_iterator findVertex(graph_t const &graph, const string& value);
-    vector<string> mapVerticesIDToPackagesName(graph_t const &graph, vector<vertex_t> const &vertices);
-    void DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex_t> &visited);
-
 public:
     GraphManager(AlpmManager manager);
 
@@ -42,9 +35,16 @@ public:
      */
     graph_t buildGraph();
     void printGraph(graph_t const &g, const char* filename);
-    vector<string> DFS(graph_t const &graph);
-    vector<string> DFSFromVertex(graph_t const &graph, const string& packageName);
-    set<string> DFSFromMultipleVertices(graph_t &graph, const vector<string>& packagesNames);
+    vector<string> DFS(graph_t const &graph, bool onlyRequiredDependencies);
+    vector<string> DFSFromVertex(graph_t const &graph, const string& packageName, bool onlyRequiredDependencies);
+    set<string> DFSFromMultipleVertices(graph_t &graph, const vector<string>& packagesNames, bool onlyRequiredDependencies);
+
+private:
+    AlpmManager manager;
+
+    vertex_iterator findVertex(graph_t const &graph, const string& value);
+    vector<string> mapVerticesIDToPackagesName(graph_t const &graph, vector<vertex_t> const &vertices);
+    void DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex_t> &visited, bool onlyRequiredDependencies);
 };
 
 #endif // GRAPHMANAGER_H
