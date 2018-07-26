@@ -1,4 +1,4 @@
-#PacmanSPF
+# PacmanSPF
 
 PacmanSPF is a small personal project which intends to help me learning CPP, playing around with graphs and using boost library.
 It generates a graph which represents the different packages on my pacman database along with their dependencies.
