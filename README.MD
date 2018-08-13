@@ -1,9 +1,9 @@
 # PacmanSPF
 
 PacmanSPF is a small personal project which intends to help me learning CPP, playing around with graphs and using boost library.
-It generates a graph which represents the different packages on my pacman database along with their dependencies.
+It generates a graph which represents the different packages on my pacman cached database along with their dependencies.
 The application offers to return a list of necessary or/and optional packages (ie. dependencies) to install a very list of packages - and only them.
-Example : if take "avahi", the application will return its required or/and optional dependencies (required: gdbm, expat... ; optional : qt4, gtk2...).
+Example : if I take "avahi", the application will return its required or/and optional dependencies (required: gdbm, expat... ; optional : qt4, gtk2...).
 
 ## Features
 
