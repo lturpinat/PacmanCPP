@@ -25,12 +25,12 @@ map<string, vector<unique_ptr<PackageDependency>>> AlpmManager::getPackages() {
         alpm_pkg_t *pkg = static_cast<alpm_pkg_t *>(cached_packages->data);
         const char *package_name = alpm_pkg_get_name(pkg);
 
-/*        // If package doesn't already exist, create a sublist for dependencies
+        #warning "Check if really usefull"
         if(packages.find(package_name) == packages.end())
         {
-            packages[package_name] = vector<PackageDependency*>{};
+            packages[package_name];
         }
-        */
+
 
         if(cached_packages->next == nullptr) break;
         cached_packages = cached_packages->next;
