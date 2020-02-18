@@ -12,7 +12,7 @@ map<string, vector<unique_ptr<PackageDependency>>> AlpmManager::getPackages() {
     alpm_handle_t *handle = alpm_initialize(fsRootDirectory, pacmanDBDirectory, nullptr);
 
     if(handle == nullptr) {
-        throw new runtime_error("Error while connecting to pacman database");
+        throw runtime_error("Error while connecting to pacman database");
     }
 
     alpm_db_t *local_db = alpm_get_localdb(handle);
