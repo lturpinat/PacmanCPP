@@ -45,7 +45,7 @@ private:
 
     vertex_iterator findVertex(graph_t const &graph, const string& value);
     vector<string> mapVerticesIDToPackagesName(graph_t const &graph, const set<vertex_t> &vertices);
-    void DFSUtil(graph_t const &graph, vertex_t &vertex, set<vertex_t> &visited, bool onlyRequiredDependencies);
+    void DFSUtil(graph_t const &graph, const vertex_t &vertex, set<vertex_t> &visited, bool onlyRequiredDependencies);
 };
 
 #endif // GRAPHMANAGER_H

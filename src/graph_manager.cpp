@@ -43,7 +43,7 @@ graph_t GraphManager::buildGraph()
     return g;
 }
 
-void GraphManager::DFSUtil(graph_t const &graph, vertex_t &vertex, set<vertex_t> &visited, bool onlyRequiredDependencies)
+void GraphManager::DFSUtil(graph_t const &graph,const vertex_t &vertex, set<vertex_t> &visited, bool onlyRequiredDependencies)
 {
     // Mark the current node as visited and print it
     visited.insert(vertex);
