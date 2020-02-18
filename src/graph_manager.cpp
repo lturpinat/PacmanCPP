@@ -85,11 +85,8 @@ vector<string> GraphManager::DFS(graph_t const &graph, bool onlyRequiredDependen
     for ( std::pair<vertex_iterator, vertex_iterator> vp = boost::vertices( graph );
           vp.first != vp.second; ++vp.first )
     {
-        if ( visited.find(*vp.first) != end(visited) )
-            continue;
-
-        vertex_t v = *vp.first;
-        DFSUtil(graph, v, visited, onlyRequiredDependencies);
+        if ( visited.find(*vp.first) == end(visited) )
+            DFSUtil(graph, *vp.first, visited, onlyRequiredDependencies);
     }
 
     visited.erase(0);
