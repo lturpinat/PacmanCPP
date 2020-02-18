@@ -1,6 +1,8 @@
 #include "graph_manager.h"
 
-GraphManager::GraphManager(AlpmManager manager) : manager(manager) {}
+using std::set;
+
+GraphManager::GraphManager(const AlpmManager &manager) : manager(manager) {}
 
 graph_t GraphManager::buildGraph()
 {
@@ -41,10 +43,10 @@ graph_t GraphManager::buildGraph()
     return g;
 }
 
-void GraphManager::DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex_t> &visited, bool onlyRequiredDependencies)
+void GraphManager::DFSUtil(graph_t const &graph,const vertex_t &vertex, set<vertex_t> &visited, bool onlyRequiredDependencies)
 {
     // Mark the current node as visited and print it
-    visited.push_back(vertex);
+    visited.insert(vertex);
 
     //Iterating recursively through the nearby vertices
     for ( std::pair<out_edge_iterator, out_edge_iterator> ve = boost::out_edges( vertex, graph );
@@ -53,7 +55,7 @@ void GraphManager::DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex
         vertex_t v2 = boost::target( *ve.first, graph );
 
         //If the vertice has already been visited, skip it
-        if(find(visited.begin(), visited.end(), v2) != visited.end())
+        if ( visited.find(v2) != end(visited) )
             continue;
 
         if(onlyRequiredDependencies)
@@ -75,29 +77,19 @@ void GraphManager::DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex
 
 vector<string> GraphManager::DFS(graph_t const &graph, bool onlyRequiredDependencies)
 {
-    unsigned long numberVertices = boost::num_vertices(graph);
-
     // Marking all vertices as not visited
-    vector<vertex_t> visited(numberVertices);
+    set<vertex_t> visited;
 
     // Call the recursive helper function to print DFS traversal
     // starting from all vertices one by one
     for ( std::pair<vertex_iterator, vertex_iterator> vp = boost::vertices( graph );
           vp.first != vp.second; ++vp.first )
     {
-        if(find(visited.begin(), visited.end(), *vp.first) != visited.end())
-            continue;
-
-        vertex_t v = *vp.first;
-        DFSUtil(graph, v, visited, onlyRequiredDependencies);
+        if ( visited.find(*vp.first) == end(visited) )
+            DFSUtil(graph, *vp.first, visited, onlyRequiredDependencies);
     }
 
-    // Clean the vector from [0,0,0,0,1,4,54] to [1,4,54] and remove from the list the very package vertex
-    // id we are looking for.
-    auto cleanedVisitedArray = remove_if(visited.begin(), visited.end(), [](vertex_t &vertex)
-    { return vertex == static_cast< unsigned long >(0); });
-
-    visited.erase(cleanedVisitedArray, visited.end());
+    visited.erase(0);
 
     return mapVerticesIDToPackagesName(graph, visited);
 }
@@ -110,15 +102,13 @@ vector<string> GraphManager::DFS(graph_t const &graph, bool onlyRequiredDependen
  */
 vector<string> GraphManager::DFSFromVertex(graph_t const &graph, const string& packageName, bool onlyRequiredDependencies)
 {
-    unsigned long numberVertices = boost::num_vertices(graph);
-
     // Initialize the vector at the number of vertices
     // TOFIX: using vectors "un-sized" is problematic as :
     // "If the new size() is greater than capacity() then all iterators
     // and references (including the past-the-end iterator) are invalidated.
     // Otherwise only the past-the-end iterator is invalidated."
     // (recursive calls in DFSUtil()
-    vector<vertex_t> visited(numberVertices);
+    set<vertex_t> visited;
 
     auto vertexByName = findVertex(graph, packageName);
     if(vertexByName == vertices(graph).second)
@@ -128,12 +118,8 @@ vector<string> GraphManager::DFSFromVertex(graph_t const &graph, const string& p
 
     DFSUtil(graph, s, visited, onlyRequiredDependencies);
 
-    // Clean the vector from [0,0,0,0,1,4,54] to [1,4,54] and remove from the list the very package vertex
-    // id we are looking for.
-    auto cleanedVisitedArray = remove_if(visited.begin(), visited.end(), [&s](vertex_t &vertex)
-    { return vertex == static_cast< unsigned long >(0) || vertex == s; });
-
-    visited.erase(cleanedVisitedArray, visited.end());
+    visited.erase(0); // 2*log(n) < n if n big
+    visited.erase(s);
 
     return mapVerticesIDToPackagesName(graph, visited);
 }
@@ -153,7 +139,7 @@ set<string> GraphManager::DFSFromMultipleVertices(graph_t &graph, const vector<s
     return requiredVertices;
 }
 
-vector<string> GraphManager::mapVerticesIDToPackagesName(graph_t const &graph, vector<vertex_t> const &vertices)
+vector<string> GraphManager::mapVerticesIDToPackagesName(graph_t const &graph, set<vertex_t> const &vertices)
 {
     vector<string> dependenciesAsString;
     std::transform(vertices.begin(), vertices.end(), back_inserter(dependenciesAsString), [ &graph ](const vertex_t& val)
@@ -166,23 +152,22 @@ vector<string> GraphManager::mapVerticesIDToPackagesName(graph_t const &graph, v
 
 void GraphManager::printGraph(graph_t const &g, const char* filename)
 {
-    ofstream file{};
 
     try
     {
-        file.open (filename);
+        ofstream file{filename};
 
-        boost::write_graphviz(file, g, [&] (ostream& out, vertex_t v)
-        {
-            out << "[label=\"" << g[v].name << "\"]";
-        },
-        [&] (ostream& out, edge_t e)
-        {
-            out << "[label=\"" << (g[e].required ? "required\"" : "optional\", color=\"blue\"") << "]";
-        });
+        boost::write_graphviz(file, g,
+            [&] (ostream& out, vertex_t v)
+            {
+                out << "[label=\"" << g[v].name << "\"]";
+            },
 
-        file << flush;
-    } catch (ofstream::failure e)
+            [&] (ostream& out, edge_t e)
+            {
+                out << "[label=\"" << (g[e].required ? "required\"" : "optional\", color=\"blue\"") << "]";
+            });
+    } catch (ofstream::failure & e)
     {
         cerr << "Couldn't write within /tmp/graph.dot" << endl;
     }

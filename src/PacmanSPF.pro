@@ -1,6 +1,6 @@
 TEMPLATE = app
-CONFIG += console c++11
-QMAKE_CXXFLAGS+=-std=c++14
+CONFIG += console c++14
+
 CONFIG -= app_bundle
 CONFIG -= qt
 
@@ -16,6 +16,5 @@ unix:!macx: LIBS += -lalpm
 
 HEADERS += \
     package_dependency.h \
-    main.h \
     alpm_manager.h \
     graph_manager.h
