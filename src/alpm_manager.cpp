@@ -44,19 +44,19 @@ map<string, vector<unique_ptr<PackageDependency>>> AlpmManager::getPackages() {
     return packages;
 }
 
-void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages)
+void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages) const
 {
     const char *package_name = alpm_pkg_get_name(pkg);
     fetch_required_dependencies(pkg, packages, package_name);
 }
 
-void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages)
+void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages) const
 {
     const char *package_name = alpm_pkg_get_name(pkg);
     fetch_optional_dependencies(pkg, packages, package_name);
 }
 
-void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages, string const &package_name)
+void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages, string const &package_name) const
 {
     alpm_list_t *dependencies = alpm_pkg_get_depends(pkg);
 
@@ -74,7 +74,7 @@ void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vecto
 
 void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg,
                                               map<string, vector<unique_ptr<PackageDependency> > > &packages,
-                                              string const &package_name)
+                                              string const &package_name) const
 {
     alpm_list_t *dependencies = alpm_pkg_get_optdepends(pkg);
 
