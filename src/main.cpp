@@ -6,15 +6,15 @@
 #include <alpm_manager.h>
 #include <graph_manager.h>
 
-const string ROOT_DIRECTORY = "/";
-const string PACMAN_DB_DIRECTORY = "/var/lib/pacman/";
+const char* ROOT_DIRECTORY = "/";
+const char* PACMAN_DB_DIRECTORY = "/var/lib/pacman/";
 
 using namespace std;
 
 int main()
 {
     // Getting local packages informations into GraphManager
-    AlpmManager alpmManager(ROOT_DIRECTORY.c_str(), PACMAN_DB_DIRECTORY.c_str());
+    AlpmManager alpmManager(ROOT_DIRECTORY, PACMAN_DB_DIRECTORY);
     GraphManager graphManager(alpmManager);
 
     // Building graph
