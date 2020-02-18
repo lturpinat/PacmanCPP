@@ -157,14 +157,16 @@ void GraphManager::printGraph(graph_t const &g, const char* filename)
     {
         ofstream file{filename};
 
-        boost::write_graphviz(file, g, [&] (ostream& out, vertex_t v)
-        {
-            out << "[label=\"" << g[v].name << "\"]";
-        },
-        [&] (ostream& out, edge_t e)
-        {
-            out << "[label=\"" << (g[e].required ? "required\"" : "optional\", color=\"blue\"") << "]";
-        });
+        boost::write_graphviz(file, g,
+            [&] (ostream& out, vertex_t v)
+            {
+                out << "[label=\"" << g[v].name << "\"]";
+            },
+
+            [&] (ostream& out, edge_t e)
+            {
+                out << "[label=\"" << (g[e].required ? "required\"" : "optional\", color=\"blue\"") << "]";
+            });
     } catch (ofstream::failure & e)
     {
         cerr << "Couldn't write within /tmp/graph.dot" << endl;
