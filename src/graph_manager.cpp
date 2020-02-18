@@ -165,7 +165,7 @@ void GraphManager::printGraph(graph_t const &g, const char* filename)
 
             [&] (ostream& out, edge_t e)
             {
-                out << "[label=\"" << (g[e].required ? "required\"" : "optional\", color=\"blue\"") << "]";
+                out << "[label=\"" << (g[e].required ? "required\"" : R"(optional", color="blue")") << "]";
             });
     } catch (ofstream::failure & e)
     {
