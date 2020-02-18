@@ -1,7 +1,15 @@
-#include <main.h>
+#include <iostream>
+#include <map>
+#include <string>
+
+#include <package_dependency.h>
+#include <alpm_manager.h>
+#include <graph_manager.h>
 
 const string ROOT_DIRECTORY = "/";
 const string PACMAN_DB_DIRECTORY = "/var/lib/pacman/";
+
+using namespace std;
 
 int main()
 {

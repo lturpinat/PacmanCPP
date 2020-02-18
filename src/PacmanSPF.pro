@@ -16,6 +16,5 @@ unix:!macx: LIBS += -lalpm
 
 HEADERS += \
     package_dependency.h \
-    main.h \
     alpm_manager.h \
     graph_manager.h
