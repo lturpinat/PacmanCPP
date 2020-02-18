@@ -6,6 +6,7 @@
 #include <boost/graph/adjacency_list.hpp>
 
 #include <boost/property_map/property_map.hpp>
+#include <set>
 
 #include <alpm_manager.h>
 
@@ -43,8 +44,8 @@ private:
     AlpmManager manager;
 
     vertex_iterator findVertex(graph_t const &graph, const string& value);
-    vector<string> mapVerticesIDToPackagesName(graph_t const &graph, vector<vertex_t> const &vertices);
-    void DFSUtil(graph_t const &graph, vertex_t &vertex, vector<vertex_t> &visited, bool onlyRequiredDependencies);
+    vector<string> mapVerticesIDToPackagesName(graph_t const &graph, const set<vertex_t> &vertices);
+    void DFSUtil(graph_t const &graph, vertex_t &vertex, set<vertex_t> &visited, bool onlyRequiredDependencies);
 };
 
 #endif // GRAPHMANAGER_H
