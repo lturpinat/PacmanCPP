@@ -27,7 +27,7 @@ using edge_iterator = boost::graph_traits<graph_t>::edge_iterator ;
 class GraphManager
 {
 public:
-    GraphManager(AlpmManager manager);
+    GraphManager(const AlpmManager & manager);
 
     /**
      * @brief Build a graph using the cached packages of the pacman db associated to the alpm manager. The file is formated in .dot (Graphiz)

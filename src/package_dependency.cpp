@@ -1,6 +1,6 @@
 #include "package_dependency.h"
 
-PackageDependency::PackageDependency(std::string package_name, bool isRequired) : package_name(package_name), required(isRequired) {}
+PackageDependency::PackageDependency(const std::string &package_name, bool isRequired) : package_name(package_name), required(isRequired) {}
 
 std::string PackageDependency::getPackageName()
 {

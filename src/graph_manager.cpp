@@ -1,6 +1,6 @@
 #include "graph_manager.h"
 
-GraphManager::GraphManager(AlpmManager manager) : manager(manager) {}
+GraphManager::GraphManager(const AlpmManager &manager) : manager(manager) {}
 
 graph_t GraphManager::buildGraph()
 {

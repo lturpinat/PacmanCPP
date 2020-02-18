@@ -11,7 +11,7 @@ private:
     bool required;
 
 public:
-    PackageDependency(std::string package_name, bool isRequired = true);
+    PackageDependency(const std::string & package_name, bool isRequired = true);
     std::string getPackageName();
     bool isRequired();
 };
