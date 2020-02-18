@@ -11,7 +11,7 @@ const char* PACMAN_DB_DIRECTORY = "/var/lib/pacman/";
 
 using namespace std;
 
-int main()
+auto main() -> int
 {
     // Getting local packages informations into GraphManager
     AlpmManager alpmManager(ROOT_DIRECTORY, PACMAN_DB_DIRECTORY);
@@ -19,7 +19,7 @@ int main()
 
     // Building graph
     graph_t g = graphManager.buildGraph();
-    graphManager.printGraph(g, "/tmp/graph.dot");
+    GraphManager::printGraph(g, "/tmp/graph.dot");
 
     cout << "Graph generated!" << endl;
 

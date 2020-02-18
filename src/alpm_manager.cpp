@@ -5,7 +5,7 @@ using namespace std;
 
 AlpmManager::AlpmManager(const char* fsRootDirectory, const char* pacmanDBDirectory) : fsRootDirectory(fsRootDirectory), pacmanDBDirectory(pacmanDBDirectory) {}
 
-map<string, vector<unique_ptr<PackageDependency>>> AlpmManager::getPackages() {
+auto AlpmManager::getPackages() -> map<string, vector<unique_ptr<PackageDependency>>> {
     map<string, vector<unique_ptr<PackageDependency>>> packages;
 
     // Initializing connection to Pacman DB
@@ -22,7 +22,7 @@ map<string, vector<unique_ptr<PackageDependency>>> AlpmManager::getPackages() {
     {
         // MAIN PACKAGE
 
-        alpm_pkg_t *pkg = static_cast<alpm_pkg_t *>(cached_packages->data);
+        auto *pkg = static_cast<alpm_pkg_t *>(cached_packages->data);
         const char *package_name = alpm_pkg_get_name(pkg);
 
         #warning "Check if really usefull"
@@ -44,17 +44,17 @@ map<string, vector<unique_ptr<PackageDependency>>> AlpmManager::getPackages() {
     return packages;
 }
 
-void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages) const
+void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages) 
 {
     fetch_required_dependencies(pkg, packages, alpm_pkg_get_name(pkg));
 }
 
-void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages) const
+void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages) 
 {
     fetch_optional_dependencies(pkg, packages, alpm_pkg_get_name(pkg));
 }
 
-void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages, string const &package_name) const
+void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages, string const &package_name) 
 {
     alpm_list_t *dependencies = alpm_pkg_get_depends(pkg);
 
@@ -62,7 +62,7 @@ void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vecto
 
     while(dependencies->data)
     {
-        alpm_depend_t *dep = static_cast<alpm_depend_t *>(dependencies->data);
+        auto *dep = static_cast<alpm_depend_t *>(dependencies->data);
         packages[package_name].push_back(make_unique<PackageDependency>(dep->name)); // Storing dependency
 
         if(dependencies->next == nullptr) break;
@@ -72,7 +72,7 @@ void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vecto
 
 void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg,
                                               map<string, vector<unique_ptr<PackageDependency> > > &packages,
-                                              string const &package_name) const
+                                              string const &package_name) 
 {
     alpm_list_t *dependencies = alpm_pkg_get_optdepends(pkg);
 
@@ -80,7 +80,7 @@ void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg,
 
     while(dependencies->data)
     {
-        alpm_depend_t *dep = static_cast<alpm_depend_t *>(dependencies->data);
+        auto *dep = static_cast<alpm_depend_t *>(dependencies->data);
         packages[package_name].push_back(make_unique<PackageDependency>( dep->name, false )); // Storing dependency
 
         if(dependencies->next == nullptr) break;

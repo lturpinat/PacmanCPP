@@ -24,11 +24,11 @@ private:
 public:
     AlpmManager(const char* fsRootDirectory, const char* pacmanDBDirectory);
 
-    void fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages) const;
-    void fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages) const;
+    static void fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages) ;
+    static void fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages) ;
 
-    void fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages, string const &package_name) const;
-    void fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages, string const &package_name) const ;
+    static void fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages, string const &package_name) ;
+    static void fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages, string const &package_name) ;
 
     map<string, vector<unique_ptr<PackageDependency> > > getPackages();
 };
