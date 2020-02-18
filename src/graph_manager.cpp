@@ -4,7 +4,7 @@ using std::set;
 
 GraphManager::GraphManager(const AlpmManager &manager) : manager(manager) {}
 
-graph_t GraphManager::buildGraph()
+auto GraphManager::buildGraph() -> graph_t
 {
     auto packages = manager.getPackages();
 
@@ -75,7 +75,7 @@ void GraphManager::DFSUtil(graph_t const &graph,const vertex_t &vertex, set<vert
     }
 }
 
-vector<string> GraphManager::DFS(graph_t const &graph, bool onlyRequiredDependencies)
+auto GraphManager::DFS(graph_t const &graph, bool onlyRequiredDependencies) -> vector<string>
 {
     // Marking all vertices as not visited
     set<vertex_t> visited;
@@ -100,7 +100,7 @@ vector<string> GraphManager::DFS(graph_t const &graph, bool onlyRequiredDependen
  * @param packageName
  * @return a list of dependencies ID or an empty list if there are no related dependency found
  */
-vector<string> GraphManager::DFSFromVertex(graph_t const &graph, const string& packageName, bool onlyRequiredDependencies)
+auto GraphManager::DFSFromVertex(graph_t const &graph, const string& packageName, bool onlyRequiredDependencies) -> vector<string>
 {
     // Initialize the vector at the number of vertices
     // TOFIX: using vectors "un-sized" is problematic as :
@@ -124,7 +124,7 @@ vector<string> GraphManager::DFSFromVertex(graph_t const &graph, const string& p
     return mapVerticesIDToPackagesName(graph, visited);
 }
 
-set<string> GraphManager::DFSFromMultipleVertices(graph_t &graph, const vector<string>& packagesNames, bool onlyRequiredDependencies)
+auto GraphManager::DFSFromMultipleVertices(graph_t &graph, const vector<string>& packagesNames, bool onlyRequiredDependencies) -> set<string>
 {
     set<string> requiredVertices;
 
@@ -139,7 +139,7 @@ set<string> GraphManager::DFSFromMultipleVertices(graph_t &graph, const vector<s
     return requiredVertices;
 }
 
-vector<string> GraphManager::mapVerticesIDToPackagesName(graph_t const &graph, set<vertex_t> const &vertices)
+auto GraphManager::mapVerticesIDToPackagesName(graph_t const &graph, set<vertex_t> const &vertices) -> vector<string>
 {
     vector<string> dependenciesAsString;
     std::transform(vertices.begin(), vertices.end(), back_inserter(dependenciesAsString), [ &graph ](const vertex_t& val)
@@ -173,7 +173,7 @@ void GraphManager::printGraph(graph_t const &g, const char* filename)
     }
 }
 
-vertex_iterator GraphManager::findVertex(graph_t const &graph, const string& value)
+auto GraphManager::findVertex(graph_t const &graph, const string& value) -> vertex_iterator
 {
     vertex_iterator vi, vi_end;
 

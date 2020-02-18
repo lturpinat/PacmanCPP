@@ -2,12 +2,12 @@
 
 PackageDependency::PackageDependency(const std::string &package_name, bool isRequired) : package_name(package_name), required(isRequired) {}
 
-std::string PackageDependency::getPackageName()
+auto PackageDependency::getPackageName() -> std::string
 {
     return package_name;
 }
 
-bool PackageDependency::isRequired()
+auto PackageDependency::isRequired() -> bool
 {
     return required;
 }

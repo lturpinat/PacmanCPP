@@ -5,7 +5,7 @@ using namespace std;
 
 AlpmManager::AlpmManager(const char* fsRootDirectory, const char* pacmanDBDirectory) : fsRootDirectory(fsRootDirectory), pacmanDBDirectory(pacmanDBDirectory) {}
 
-map<string, vector<unique_ptr<PackageDependency>>> AlpmManager::getPackages() {
+auto AlpmManager::getPackages() -> map<string, vector<unique_ptr<PackageDependency>>> {
     map<string, vector<unique_ptr<PackageDependency>>> packages;
 
     // Initializing connection to Pacman DB
@@ -22,7 +22,7 @@ map<string, vector<unique_ptr<PackageDependency>>> AlpmManager::getPackages() {
     {
         // MAIN PACKAGE
 
-        alpm_pkg_t *pkg = static_cast<alpm_pkg_t *>(cached_packages->data);
+        auto *pkg = static_cast<alpm_pkg_t *>(cached_packages->data);
         const char *package_name = alpm_pkg_get_name(pkg);
 
         #warning "Check if really usefull"
@@ -62,7 +62,7 @@ void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vecto
 
     while(dependencies->data)
     {
-        alpm_depend_t *dep = static_cast<alpm_depend_t *>(dependencies->data);
+        auto *dep = static_cast<alpm_depend_t *>(dependencies->data);
         packages[package_name].push_back(make_unique<PackageDependency>(dep->name)); // Storing dependency
 
         if(dependencies->next == nullptr) break;
@@ -80,7 +80,7 @@ void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg,
 
     while(dependencies->data)
     {
-        alpm_depend_t *dep = static_cast<alpm_depend_t *>(dependencies->data);
+        auto *dep = static_cast<alpm_depend_t *>(dependencies->data);
         packages[package_name].push_back(make_unique<PackageDependency>( dep->name, false )); // Storing dependency
 
         if(dependencies->next == nullptr) break;
