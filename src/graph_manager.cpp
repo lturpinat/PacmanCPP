@@ -182,7 +182,7 @@ void GraphManager::printGraph(graph_t const &g, const char* filename)
         });
 
         file << flush;
-    } catch (ofstream::failure e)
+    } catch (ofstream::failure & e)
     {
         cerr << "Couldn't write within /tmp/graph.dot" << endl;
     }
