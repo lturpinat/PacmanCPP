@@ -128,7 +128,7 @@ auto GraphManager::DFSFromMultipleVertices(graph_t &graph, const vector<string>&
 {
     set<string> requiredVertices;
 
-    for(auto pkg : packagesNames)
+    for(const auto& pkg : packagesNames)
     {
         auto dependencies = DFSFromVertex(graph, pkg, onlyRequiredDependencies);
         for_each(dependencies.begin(), dependencies.end(), [&requiredVertices](const string& val){

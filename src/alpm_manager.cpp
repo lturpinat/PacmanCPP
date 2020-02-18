@@ -44,12 +44,12 @@ auto AlpmManager::getPackages() -> map<string, vector<unique_ptr<PackageDependen
     return packages;
 }
 
-void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages) const
+void AlpmManager::fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages) 
 {
     fetch_required_dependencies(pkg, packages, alpm_pkg_get_name(pkg));
 }
 
-void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages) const
+void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency>>> &packages) 
 {
     fetch_optional_dependencies(pkg, packages, alpm_pkg_get_name(pkg));
 }

@@ -19,7 +19,7 @@ auto main() -> int
 
     // Building graph
     graph_t g = graphManager.buildGraph();
-    graphManager.printGraph(g, "/tmp/graph.dot");
+    GraphManager::printGraph(g, "/tmp/graph.dot");
 
     cout << "Graph generated!" << endl;
 
