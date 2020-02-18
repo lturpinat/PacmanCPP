@@ -82,7 +82,6 @@ void AlpmManager::fetch_optional_dependencies(alpm_pkg_t *pkg,
     {
         alpm_depend_t *dep = static_cast<alpm_depend_t *>(dependencies->data);
         packages[package_name].push_back(make_unique<PackageDependency>( dep->name, false )); // Storing dependency
-        //packages[package_name].push_back(new PackageDependency{ dep->name, false }); // Storing dependency
 
         if(dependencies->next == nullptr) break;
         dependencies = dependencies->next;
