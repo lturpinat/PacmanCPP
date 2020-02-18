@@ -27,8 +27,8 @@ public:
     void fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages) const;
     void fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages) const;
 
-    void fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages, string const &package_name) const;
-    void fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages, string const &package_name) const ;
+    static void fetch_required_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages, string const &package_name) ;
+    static void fetch_optional_dependencies(alpm_pkg_t *pkg, map<string, vector<unique_ptr<PackageDependency> > > &packages, string const &package_name) ;
 
     map<string, vector<unique_ptr<PackageDependency> > > getPackages();
 };

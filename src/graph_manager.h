@@ -35,7 +35,7 @@ public:
      * @return graph representing the relations between the packages
      */
     graph_t buildGraph();
-    void printGraph(graph_t const &g, const char* filename);
+    static void printGraph(graph_t const &g, const char* filename);
     vector<string> DFS(graph_t const &graph, bool onlyRequiredDependencies);
     vector<string> DFSFromVertex(graph_t const &graph, const string& packageName, bool onlyRequiredDependencies);
     set<string> DFSFromMultipleVertices(graph_t &graph, const vector<string>& packagesNames, bool onlyRequiredDependencies);
@@ -43,8 +43,8 @@ public:
 private:
     AlpmManager manager;
 
-    vertex_iterator findVertex(graph_t const &graph, const string& value);
-    vector<string> mapVerticesIDToPackagesName(graph_t const &graph, const set<vertex_t> &vertices);
+    static vertex_iterator findVertex(graph_t const &graph, const string& value);
+    static vector<string> mapVerticesIDToPackagesName(graph_t const &graph, const set<vertex_t> &vertices);
     void DFSUtil(graph_t const &graph, const vertex_t &vertex, set<vertex_t> &visited, bool onlyRequiredDependencies);
 };
 
