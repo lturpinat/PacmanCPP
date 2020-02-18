@@ -166,11 +166,10 @@ vector<string> GraphManager::mapVerticesIDToPackagesName(graph_t const &graph, v
 
 void GraphManager::printGraph(graph_t const &g, const char* filename)
 {
-    ofstream file{};
 
     try
     {
-        file.open (filename);
+        ofstream file{filename};
 
         boost::write_graphviz(file, g, [&] (ostream& out, vertex_t v)
         {
@@ -180,8 +179,6 @@ void GraphManager::printGraph(graph_t const &g, const char* filename)
         {
             out << "[label=\"" << (g[e].required ? "required\"" : "optional\", color=\"blue\"") << "]";
         });
-
-        file << flush;
     } catch (ofstream::failure & e)
     {
         cerr << "Couldn't write within /tmp/graph.dot" << endl;
